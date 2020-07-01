@@ -10,6 +10,9 @@ using WebStore.Interfaces.Services;
 
 namespace WebStore.ServiceHosting.Controllers
 {
+	/// <summary>
+	/// Управление сотрудниками
+	/// </summary>	
 	//[Route("api/[controller]")]
 	[Route(WebAPI.Employees)]
 	[ApiController]
@@ -22,6 +25,10 @@ namespace WebStore.ServiceHosting.Controllers
 			_EmployeesData = employeesData;
 		}
 
+		/// <summary>
+		/// Получить всех сотрудников
+		/// </summary>
+		/// <returns>Перечисление сотрудников магазина</returns>
 		[HttpGet]
 		public IEnumerable<Employee> Get()
 		{
@@ -57,6 +64,7 @@ namespace WebStore.ServiceHosting.Controllers
 			return success;
 		}
 
+		[NonAction]
 		public void SaveChanges()
 		{
 			_EmployeesData.SaveChanges();
