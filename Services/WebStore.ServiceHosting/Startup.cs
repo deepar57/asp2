@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.IO;
 using WebStore.DAL.Context;
 using WebStore.Domain.Entities.Identity;
 using WebStore.Interfaces.Services;
@@ -55,6 +56,22 @@ namespace WebStore.ServiceHosting
 				.AddScoped<IEmployeesData, SqlEmployeesData>()
 				.AddScoped<IProductData, SqlProductData>()
 				.AddScoped<IOrderService, SqlOrderService>();
+
+			services.AddSwaggerGen(opt =>
+			{
+				opt.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "WebStore.API", Version = "v1" });
+
+				const string web_domain_xml = "WebStore.Domain.xml";
+				const string web_api_xml = "WebStore.ServiceHosting.xml";
+				const string debug_path = "bin/debug/netcoreapp3.1";
+
+				opt.IncludeXmlComments(web_api_xml);
+
+				if (File.Exists(web_domain_xml))
+					opt.IncludeXmlComments(web_domain_xml);
+				else if (File.Exists(Path.Combine(debug_path, web_domain_xml)))
+					opt.IncludeXmlComments(Path.Combine(debug_path, web_domain_xml));
+			});
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WebStoreDBInitializer db)
@@ -69,6 +86,13 @@ namespace WebStore.ServiceHosting
 			app.UseRouting();
 
 			app.UseAuthorization();
+
+			app.UseSwagger();
+			app.UseSwaggerUI(opt =>
+			{
+				opt.SwaggerEndpoint("/swagger/v1/swagger.json", "WebStore.API");
+				opt.RoutePrefix = string.Empty;
+			});
 
 			app.UseEndpoints(endpoints =>
 			{
