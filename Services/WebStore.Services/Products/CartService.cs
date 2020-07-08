@@ -1,54 +1,23 @@
 ﻿using System.Linq;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using WebStore.Domain.Entities;
 using WebStore.Domain.Models;
 using WebStore.Domain.ViewModels;
 using WebStore.Interfaces.Services;
 using WebStore.Services.Mapping;
 
-namespace WebStore.Services.Products.InCookies
+namespace WebStore.Services.Products
 {
-	public class CookiesCartService : ICartService
+	public class CartService : ICartService
 	{
 		private readonly IProductData _ProductData;
-		private readonly IHttpContextAccessor _HttpContextAccessor;
-		private readonly string _CartName;
+		private readonly ICartStore _CartStore;
 
-		public Cart Cart
-		{
-			get
-			{
-				var context = _HttpContextAccessor.HttpContext;
-				var cookies = context.Response.Cookies;
-				var cart_cookie = context.Request.Cookies[_CartName];
-				if (cart_cookie is null)
-				{
-					var cart = new Cart();
-					cookies.Append(_CartName, JsonConvert.SerializeObject(cart));
-					return cart;
-				}
+		public Cart Cart { get => _CartStore.Cart; set => _CartStore.Cart = value; }
 
-				ReplaceCookie(cookies, cart_cookie);
-				return JsonConvert.DeserializeObject<Cart>(cart_cookie);
-			}
-			set => ReplaceCookie(_HttpContextAccessor.HttpContext.Response.Cookies, JsonConvert.SerializeObject(value));
-		}
-
-		private void ReplaceCookie(IResponseCookies cookies, string cookie)
-		{
-			cookies.Delete(_CartName);
-			cookies.Append(_CartName, cookie);
-		}
-
-		public CookiesCartService(IProductData ProductData, IHttpContextAccessor HttpContextAccessor)
+		public CartService(IProductData ProductData, ICartStore CartStore)
 		{
 			_ProductData = ProductData;
-			_HttpContextAccessor = HttpContextAccessor;
-
-			var user = HttpContextAccessor.HttpContext.User;
-			var user_name = user.Identity.IsAuthenticated ? user.Identity.Name : null;
-			_CartName = $"WebStore.Cart[{user_name}]";
+			_CartStore = CartStore;
 		}
 
 		public void AddToCart(int id)

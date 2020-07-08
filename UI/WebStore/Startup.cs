@@ -15,10 +15,10 @@ using WebStore.Clients.Values;
 using WebStore.Domain.Entities.Identity;
 using WebStore.Infrastructure.AutoMapperPropfiles;
 using WebStore.Infrastructure.Middleware;
-//using WebStore.Infrastructure.Middleware;
 using WebStore.Interfaces.Services;
 using WebStore.Interfaces.TestApi;
 using WebStore.Logger;
+using WebStore.Services.Products;
 using WebStore.Services.Products.InCookies;
 
 namespace WebStore
@@ -36,6 +36,7 @@ namespace WebStore
 				cfg.AddProfile<ViewModelsMapping>();
 			}, typeof(Startup));
 
+
 			services.AddIdentity<User, Role>()
 			   .AddDefaultTokenProviders();
 
@@ -49,9 +50,8 @@ namespace WebStore
 			   .AddTransient<IUserTwoFactorStore<User>, UsersClient>()
 			   .AddTransient<IUserClaimStore<User>, UsersClient>()
 			   .AddTransient<IUserLoginStore<User>, UsersClient>();
-
 			services
-				.AddTransient<IRoleStore<Role>, RolesClient>();
+			   .AddTransient<IRoleStore<Role>, RolesClient>();
 
 			#endregion
 
@@ -91,7 +91,9 @@ namespace WebStore
 
 			services.AddScoped<IEmployeesData, EmployeesClient>();
 			services.AddScoped<IProductData, ProductsClient>();
-			services.AddScoped<ICartService, CookiesCartService>();
+			services.AddScoped<ICartStore, CookiesCartStore>();
+			services.AddScoped<ICartService, CartService>();
+			//services.AddScoped<ICartService, CookiesCartService>();
 			services.AddScoped<IOrderService, OrdersClient>();
 			services.AddTransient<IValueService, ValuesClient>();
 		}
@@ -110,8 +112,6 @@ namespace WebStore
 
 			app.UseStaticFiles();
 			app.UseDefaultFiles();
-
-			app.UseWelcomePage("/MVC");
 
 			app.UseRouting();
 
