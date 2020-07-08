@@ -44,7 +44,6 @@ namespace WebStore.ServiceHosting
 				opt.Password.RequireNonAlphanumeric = false;
 				opt.Password.RequiredUniqueChars = 3;
 
-				//opt.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCD1234567890";
 				opt.User.RequireUniqueEmail = false;
 #endif
 
