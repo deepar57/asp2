@@ -12,7 +12,11 @@ namespace WebStore.Services.Products.InMemory
 	{
 		public IEnumerable<Section> GetSections() => TestData.Sections;
 
+		public Section GetSection(int Id) => TestData.Sections.FirstOrDefault(s => s.Id == Id);
+
 		public IEnumerable<Brand> GetBrands() => TestData.Brands;
+
+		public Brand GetBrand(int Id) => TestData.Brands.FirstOrDefault(b => b.Id == Id);
 
 		public IEnumerable<ProductDto> GetProducts(ProductFilter Filter = null)
 		{
@@ -24,7 +28,7 @@ namespace WebStore.Services.Products.InMemory
 			if (Filter?.BrandId != null)
 				query = query.Where(product => product.BrandId == Filter.BrandId);
 
-			return query.Select(c => c.ToDto());
+			return query.Select(p => p.ToDto());
 		}
 
 		public ProductDto GetProductById(int id) => TestData.Products.FirstOrDefault(p => p.Id == id).ToDto();
