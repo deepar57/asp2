@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using WebStore.Domain;
 using WebStore.Domain.Dto.Products;
@@ -15,35 +11,26 @@ namespace WebStore.ServiceHosting.Controllers
 	[ApiController]
 	public class ProductsApiController : ControllerBase, IProductData
 	{
-		private readonly IProductData _IProductData;
+		private readonly IProductData _ProductData;
 
-		public ProductsApiController(IProductData productData)
-		{
-			_IProductData = productData;
-		}
+		public ProductsApiController(IProductData ProductData) => _ProductData = ProductData;
 
-		[HttpGet("brands")] // api/products/brands
-		public IEnumerable<Brand> GetBrands()
-		{
-			return _IProductData.GetBrands();
-		}
+		[HttpGet("sections")] //api/products/sections
+		public IEnumerable<Section> GetSections() => _ProductData.GetSections();
 
-		[HttpGet("sections")]
-		public IEnumerable<Section> GetSections()
-		{
-			return _IProductData.GetSections();
-		}
+		[HttpGet("section/{Id}")]
+		public Section GetSection(int Id) => _ProductData.GetSection(Id);
+
+		[HttpGet("brands")] //api/products/brands
+		public IEnumerable<Brand> GetBrands() => _ProductData.GetBrands();
+
+		[HttpGet("brand/{Id}")]
+		public Brand GetBrand(int Id) => _ProductData.GetBrand(Id);
 
 		[HttpPost]
-		public IEnumerable<ProductDto> GetProducts([FromBody] ProductFilter Filter = null)
-		{
-			return _IProductData.GetProducts(Filter);
-		}
+		public IEnumerable<ProductDto> GetProducts([FromBody] ProductFilter Filter = null) => _ProductData.GetProducts(Filter);
 
 		[HttpGet("{id}")]
-		public ProductDto GetProductById(int id)
-		{
-			return _IProductData.GetProductById(id);
-		}
+		public ProductDto GetProductById(int id) => _ProductData.GetProductById(id);
 	}
 }
