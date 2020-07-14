@@ -56,12 +56,14 @@ namespace WebStore.Controllers
 			var order_model = new CreateOrderModel
 			{
 				Order = Model,
-				Items = _CartService.TransformFromCart().Items.Select(c => new OrderItemDto
-				{
-					Id = c.Product.Id,
-					Price = c.Product.Price,
-					Quantity = c.Quantity
-				}).ToList()
+				Items = _CartService.TransformFromCart().Items
+				   .Select(item => new OrderItemDto
+				   {
+					   Id = item.Product.Id,
+					   Price = item.Product.Price,
+					   Quantity = item.Quantity
+				   })
+				   .ToList()
 			};
 
 			var order = await OrderService.CreateOrder(User.Identity.Name, order_model);
@@ -76,5 +78,35 @@ namespace WebStore.Controllers
 			ViewBag.OrderId = id;
 			return View();
 		}
+
+		#region WebAPI
+
+		public IActionResult GetCartView() => ViewComponent("Cart");
+
+		public IActionResult AddToCartAPI(int id)
+		{
+			_CartService.AddToCart(id);
+			return Json(new { id, message = $"Товар id:{id} был добавлен в корзину" });
+		}
+
+		public IActionResult DecrementFromCartAPI(int id)
+		{
+			_CartService.DecrementFromCart(id);
+			return Ok();
+		}
+
+		public IActionResult RemoveFromCartAPI(int id)
+		{
+			_CartService.RemoveFromCart(id);
+			return Ok();
+		}
+
+		public IActionResult RemoveAllAPI()
+		{
+			_CartService.RemoveAll();
+			return Ok();
+		}
+
+		#endregion
 	}
 }
