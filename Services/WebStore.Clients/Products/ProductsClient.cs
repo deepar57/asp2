@@ -21,10 +21,10 @@ namespace WebStore.Clients.Products
 
 		public Brand GetBrand(int Id) => Get<Brand>($"{_ServiceAddress}/brand/{Id}");
 
-		public IEnumerable<ProductDto> GetProducts(ProductFilter Filter = null) =>
+		public PageProductsDto GetProducts(ProductFilter Filter = null) =>
 			Post(_ServiceAddress, Filter ?? new ProductFilter())
 			   .Content
-			   .ReadAsAsync<IEnumerable<ProductDto>>()
+			   .ReadAsAsync<PageProductsDto>()
 			   .Result;
 
 		public ProductDto GetProductById(int id) => Get<ProductDto>($"{_ServiceAddress}/{id}");

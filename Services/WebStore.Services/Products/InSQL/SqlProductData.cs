@@ -23,7 +23,7 @@ namespace WebStore.Services.Products.InSQL
 
 		public Brand GetBrand(int Id) => _db.Brands.Find(Id);
 
-		public IEnumerable<ProductDto> GetProducts(ProductFilter Filter = null)
+		public PageProductsDto GetProducts(ProductFilter Filter = null)
 		{
 			IQueryable<Product> query = _db.Products;
 
@@ -38,7 +38,18 @@ namespace WebStore.Services.Products.InSQL
 					query = query.Where(product => product.SectionId == Filter.SectionId);
 			}
 
-			return query.Select(p => p.ToDto());
+			var total_count = query.Count();
+
+			if (Filter?.PageSize > 0)
+				query = query
+				   .Skip((Filter.Page - 1) * (int)Filter.PageSize)
+				   .Take((int)Filter.PageSize);
+
+			return new PageProductsDto
+			{
+				Products = query.Select(p => p.ToDto()),
+				TotalCount = total_count
+			};
 		}
 
 		public ProductDto GetProductById(int id) => _db.Products
