@@ -15,7 +15,7 @@ namespace WebStore.Interfaces.Services
 
 		Brand GetBrand(int Id);// => GetBrands().FirstOrDefault(b => b.Id == Id);
 
-		IEnumerable<ProductDto> GetProducts(ProductFilter Filter = null);
+		PageProductsDto GetProducts(ProductFilter Filter = null);
 
 		ProductDto GetProductById(int id);
 	}
