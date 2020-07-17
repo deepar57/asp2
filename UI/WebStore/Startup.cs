@@ -13,6 +13,7 @@ using WebStore.Clients.Orders;
 using WebStore.Clients.Products;
 using WebStore.Clients.Values;
 using WebStore.Domain.Entities.Identity;
+using WebStore.Hubs;
 using WebStore.Infrastructure.AutoMapperPropfiles;
 using WebStore.Infrastructure.Middleware;
 using WebStore.Interfaces.Services;
@@ -31,11 +32,12 @@ namespace WebStore
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddSignalR();
+
 			services.AddAutoMapper(cfg =>
 			{
 				cfg.AddProfile<ViewModelsMapping>();
 			}, typeof(Startup));
-
 
 			services.AddIdentity<User, Role>()
 			   .AddDefaultTokenProviders();
@@ -120,6 +122,8 @@ namespace WebStore
 
 			app.UseEndpoints(endpoints =>
 			{
+				endpoints.MapHub<InformationHub>("/info");
+
 				endpoints.MapControllerRoute(
 					name: "areas",
 					pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
